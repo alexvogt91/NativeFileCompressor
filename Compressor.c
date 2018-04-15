@@ -99,25 +99,48 @@ int wmain(int argc, wchar_t *argv[])
 
 	// Open File with read parameters
 
-	st = NtCreateFile(&openhandle, FILE_GENERIC_READ, &Obja1, &io, &large, FILE_ATTRIBUTE_NORMAL, FILE_SHARE_READ, FILE_OPEN, FILE_NON_DIRECTORY_FILE | FILE_SYNCHRONOUS_IO_NONALERT, NULL, 0);
+	st = NtCreateFile(&openhandle, FILE_GENERIC_READ, &Obja1, &io, &large, FILE_ATTRIBUTE_NORMAL, 
+			  FILE_SHARE_READ, FILE_OPEN, 
+			  FILE_NON_DIRECTORY_FILE | 
+			  FILE_SYNCHRONOUS_IO_NONALERT, 
+			  NULL, 
+			  0);
+	
 	if (NT_SUCCESS(st))
 	{
 		wprintf(L"[+] File -> %ws Opened successfully\r\n", sourcefile.Buffer);
 		wprintf(L"[+] Getting file size...\r\n");
-		st = NtQueryInformationFile(openhandle, &io, &fileinfo, sizeof(FILE_STANDARD_INFORMATION), FileStandardInformation);	// GetFileSize @ win32 api
+		st = NtQueryInformationFile(openhandle, &io, &fileinfo, 
+					    sizeof(FILE_STANDARD_INFORMATION), 
+					    FileStandardInformation);	// GetFileSize @ win32 api
 		if (NT_SUCCESS(st))
 		{
 			wprintf(L"[+] File size: %ld bytes\r\n", fileinfo.EndOfFile.QuadPart);
 
 			// Allocate memory
 
-			st = NtAllocateVirtualMemory(NtCurrentProcess(), (void**)&kmalloc, 0, (unsigned long*)&fileinfo.EndOfFile.QuadPart, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+			st = NtAllocateVirtualMemory(NtCurrentProcess(), 
+						     (void**)&kmalloc, 
+						     0, 
+						     (unsigned long*)&fileinfo.EndOfFile.QuadPart, M
+						     EM_COMMIT | 
+						     MEM_RESERVE, 
+						     PAGE_READWRITE);
+			
 			if (NT_SUCCESS(st))
 			{
 
 				wprintf(L"[+] Memory allocated !\r\n");
 				wprintf(L"[+] Reading file...\r\n");
-				st = NtReadFile(openhandle, NULL, NULL, NULL, &io, kmalloc, fileinfo.EndOfFile.QuadPart, NULL, 0);		// Read File
+				st = NtReadFile(openhandle, 
+						NULL, 
+						NULL, 
+						NULL, 
+						&io, 
+						kmalloc, 
+						fileinfo.EndOfFile.QuadPart,
+						NULL, 
+						0);		// Read File
 				if (NT_SUCCESS(st))
 				{
 					wprintf(L"[+] File successfully read !\r\n");
@@ -146,7 +169,18 @@ int wmain(int argc, wchar_t *argv[])
 
 						// Create file with right parameters 
 
-						st = NtCreateFile(&writehandle, FILE_GENERIC_WRITE, &Obja2, &io2, &large2, FILE_ATTRIBUTE_NORMAL, FILE_SHARE_WRITE, FILE_CREATE, FILE_NON_DIRECTORY_FILE | FILE_SYNCHRONOUS_IO_NONALERT, NULL, 0);
+						st = NtCreateFile(&writehandle,
+								  FILE_GENERIC_WRITE, 
+								  &Obja2, 
+								  &io2, 
+								  &large2, 
+								  FILE_ATTRIBUTE_NORMAL, 
+								  FILE_SHARE_WRITE, 
+								  FILE_CREATE, 
+								  FILE_NON_DIRECTORY_FILE | 
+								  FILE_SYNCHRONOUS_IO_NONALERT,
+								  NULL, 
+								  0);
 						if (NT_SUCCESS(st))
 						{
 							wprintf(L"[+] File -> %ws Created successfully\r\n", destfile.Buffer);
@@ -154,7 +188,16 @@ int wmain(int argc, wchar_t *argv[])
 
 							// Write compressed data to new file
 
-							st = NtWriteFile(writehandle, NULL, NULL, NULL, &io2, GetBuffer, outsize, NULL, 0);
+							st = NtWriteFile(
+								writehandle, 
+								NULL, 
+								NULL,
+								NULL, 
+								&io2, 
+								GetBuffer, 
+								outsize, 
+								NULL, 
+								0);
 							if (NT_SUCCESS(st))
 							{
 								wprintf(L"[+] File filled with data !\r\n");
