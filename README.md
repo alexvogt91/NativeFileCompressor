@@ -1,5 +1,7 @@
 # NativeFileCompressor
-Native file compressor using only the ntdll.dll
 
+Little Native file compressor using only the ntdll.dll
 
-Usage: NativeFileCompressor.exe filetobecompressed.exe finalfile.exe
+Takes two command line arguments
+
+Usage: NativeFileCompressor.exe [filetobecompressed.exe] [finalfile.exe]
