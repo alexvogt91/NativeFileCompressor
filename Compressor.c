@@ -122,8 +122,8 @@ int wmain(int argc, wchar_t *argv[])
 			st = NtAllocateVirtualMemory(NtCurrentProcess(), 
 						     (void**)&kmalloc, 
 						     0, 
-						     (unsigned long*)&fileinfo.EndOfFile.QuadPart, M
-						     EM_COMMIT | 
+						     (unsigned long*)&fileinfo.EndOfFile.QuadPart, 
+						     MEM_COMMIT | 
 						     MEM_RESERVE, 
 						     PAGE_READWRITE);
 			
@@ -132,6 +132,7 @@ int wmain(int argc, wchar_t *argv[])
 
 				wprintf(L"[+] Memory allocated !\r\n");
 				wprintf(L"[+] Reading file...\r\n");
+				// Read file
 				st = NtReadFile(openhandle, 
 						NULL, 
 						NULL, 
@@ -140,7 +141,7 @@ int wmain(int argc, wchar_t *argv[])
 						kmalloc, 
 						fileinfo.EndOfFile.QuadPart,
 						NULL, 
-						0);		// Read File
+						0);		
 				if (NT_SUCCESS(st))
 				{
 					wprintf(L"[+] File successfully read !\r\n");
@@ -148,7 +149,8 @@ int wmain(int argc, wchar_t *argv[])
 
 
 					wprintf(L"[+] Compressing data...\r\n");
-					unsigned char *GetBuffer = CompressBuffer(kmalloc, (size_t)fileinfo.EndOfFile.QuadPart, &outsize);	// Compress Data
+					// Compress data function
+					unsigned char *GetBuffer = CompressBuffer(kmalloc, (size_t)fileinfo.EndOfFile.QuadPart, &outsize);	
 					if (GetBuffer != NULL)
 					{
 
